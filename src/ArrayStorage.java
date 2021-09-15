@@ -4,19 +4,25 @@
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
 
+    private static int size = 0;
+
     void clear() {
-        int size = size();
         for (int i = 0; i < size; i++) {
             storage[i] = null;
         }
+        size = 0;
     }
 
     void save(Resume r) {
-        storage[size()] = r;
+        if (size < storage.length) {
+            storage[size] = r;
+            size++;
+        }
     }
 
     Resume get(String uuid) {
-        for (int i = 0; i < size(); i++) {
+        int size = size();
+        for (int i = 0; i < size; i++) {
             if (uuid.equals(storage[i].toString())) {
                 return storage[i];
             }
@@ -25,16 +31,21 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        int deletedPosition = Integer.MIN_VALUE;
-        for (int i = 0; i < size(); i++) {
-            if (uuid.equals(storage[i].toString())) {
-                deletedPosition = i;
+        int deletedPosition = -1;
+        if (get(uuid) != null) {
+            for (int i = 0; i < size; i++) {
+                if (uuid.equals(storage[i].toString())) {
+                    deletedPosition = i;
+                }
             }
-            if (deletedPosition >= 0 && deletedPosition < storage.length - 1) {
-                storage[i] = storage[i + 1];
-            } else if (deletedPosition == storage.length - 1) {
-                storage[i] = null;
+            for (int i = deletedPosition; i < size; i++) {
+                if (i < storage.length - 1) {
+                    storage[i] = storage[i + 1];
+                } else {
+                    storage[i] = null;
+                }
             }
+            size--;
         }
     }
 
@@ -42,18 +53,14 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        Resume[] storageToReturn = new Resume[size()];
-        for (int i = 0; i < size(); i++) {
-            storageToReturn[i] = storage[i];
+        Resume[] allResume = new Resume[size()];
+        if (size > 0) {
+            System.arraycopy(storage, 0, allResume, 0, size);
         }
-        return storageToReturn;
+        return allResume;
     }
 
     int size() {
-        int i = 0;
-        while (storage[i] != null) {
-            i++;
-        }
-        return i;
+        return size;
     }
 }
