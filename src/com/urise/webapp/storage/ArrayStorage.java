@@ -14,7 +14,7 @@ import java.util.Arrays;
 */
 
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
+    private final Resume[] storage = new Resume[10000];
     private int size = 0;
 
     public void clear() {
@@ -22,47 +22,41 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void update(String prevUuid, String newUuid) {
-        int indexOfResumeByUuid = getIndex(prevUuid);
-        int indexOfResumeByNewUuid = getIndex(newUuid);
-        if (indexOfResumeByUuid == -1) {
-            System.out.println("Resume is not present");
-        } else if (indexOfResumeByNewUuid != -1) {
-            System.out.println("Resume with such uuid is already exist");
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index == -1) {
+            System.out.println("Resume " + r.getUuid() + " is not exist");
         } else {
-            storage[indexOfResumeByUuid].setUuid(newUuid);
+            storage[index] = r;
         }
     }
 
     public void save(Resume r) {
         if (getIndex(r.getUuid()) != -1) {
-            System.out.println("Resume is already present");
+            System.out.println("Resume " + r.getUuid() + " is already exist");
+        } else if (size == storage.length) {
+            System.out.println("Storage is overflown");
         } else {
-            if (size < storage.length) {
-                storage[size] = r;
-                size++;
-            } else {
-                System.out.println("Storage is overflown");
-            }
+            storage[size] = r;
+            size++;
         }
     }
 
     public Resume get(String uuid) {
-        int indexOfResumeByUuid = getIndex(uuid);
-        if (indexOfResumeByUuid == -1) {
-            System.out.println("Resume is not present");
+        int index = getIndex(uuid);
+        if (index == -1) {
+            System.out.println("Resume " + uuid + " is not present");
             return null;
-        } else {
-            return storage[indexOfResumeByUuid];
         }
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        int indexOfResumeByUuid = getIndex(uuid);
-        if (indexOfResumeByUuid == -1) {
-            System.out.println("Resume is not present");
+        int index = getIndex(uuid);
+        if (index == -1) {
+            System.out.println("Resume " + uuid + " is not present");
         } else {
-            storage[indexOfResumeByUuid] = storage[size - 1];
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         }
